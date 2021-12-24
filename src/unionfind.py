@@ -1,84 +1,94 @@
 class UnionFind():
-
     def __init__(self):
-        self.data_list = []
+        self.__data = []
+        # [[1, {1,2,3}],
+        #  [5, {12,10,5}],
+        #  [45, {45,6,9,7}]
+        #
+        # 1,5,45 are parents of unions
 
     def __make_new_union(self, id1, id2):
-        self.data_list.append([id1])  # initializing parent
-        self.data_list[len(self.data_list)-1].append((id1, id2))
-        # [[1, (1,6)], [2, (2,3)]]
+        self.__data.append([id1])  # appending parent
+
+        union_set = set()
+        union_set.add(id1)
+        union_set.add(id2)
+
+        last_union_index = len(self.__data)-1
+        self.__data[last_union_index].append(union_set)
 
     def union(self, id1, id2):
-        if id1 == id2:
-            print('id1 and id2 must be Unequal')
-            return False
-
-        if self.data_list == []:
+        # first union
+        if self.__data == []:
             self.__make_new_union(id1, id2)
             return True
 
-        # make new union
-        flag = False
-        for union in self.data_list:
-            for i, j in union[1:]:
-                if len(set([id1, id2, i, j])) < 4:
-                    flag = True
-
-        if not flag:
-            self.__make_new_union(id1, id2)
-            return
-
-        # tekrari
-        for union in self.data_list:
-            for i, j in union[1:]:
-                if len(set([id1, id2, i, j])) == 2:
-                    print('tekrari ast!')
-                    return
+        # id1 == id2
+        if id1 == id2:
+            return False
 
         self.__union_of_unions(id1, id2)
-        # merge
-        for index in range(len(self.data_list)):
-            for i, j in self.data_list[index][1:]:
-                if len(set([id1, id2, i, j])) == 3:
-                    self.data_list[index].append((id1, id2))
-                    return
+        # make new union,merge
+        duplicate = 0
+        for union in self.__data:
+            for set_ in union[1:]:  # [1, {1,2,3,4}]
+                if id1 in set_ or id2 in set_:
+                    index = self.__data.index(union)
+                    self.__data[index][1].add(id1)
+                    self.__data[index][1].add(id2)
+                    duplicate = 1
+        if not duplicate:
+            self.__make_new_union(id1, id2)
+            return True
 
     def __union_of_unions(self, id1, id2):
-        id1_parent = self.__find(id1)
-        id2_parent = self.__find(id2)
-        if id1_parent == 'not found' or id2_parent == 'not found' or id1_parent == id2_parent:
-            return
 
-        for item in self.data_list[id2_parent[1]][1:]:
-            self.data_list[id1_parent[1]].append(item)
-        self.data_list.pop(id2_parent[1])
+        parent_1 = self.__find(id1)
+        parent_2 = self.__find(id2)
+
+        if not parent_1 or not parent_2 or parent_2==parent_1:
+            return
+        
+        for item in self.__data[parent_2[1]][1:]:
+          for id in item: 
+            self.__data[parent_1[1]][1].add(id)
+        self.__data.pop(parent_2[1])
 
     def display_data_list(self):
-        
-        print(f'Unions: {self.data_list}')
+        print(f'Unions: {self.__data}')
 
     def __find(self, id):
-        for union in self.data_list:
-            for i, j in union[1:]:
-                if len(set([i, j, id])) == 2:
-                    return (union[0], self.data_list.index(union))
-        return ('not found')
+        for union in self.__data:
+            for set_ in union[1:]:
+                if id in set_:
+                    return (union[0], self.__data.index(union))
+        return False
 
     def find(self, id1, id2):
-        if self.__find(id1) == 'not found':
+        parent_1 = self.__find(id1)
+        parent_2 = self.__find(id2)
+        if not parent_1 or not parent_2:  # not found check
             return False
-        elif self.__find(id1) == self.__find(id2):
+        if parent_1 == parent_2:
             return True
-        else:
-            return False
-    def say_hi(self):
-        print ('hello')
+
 """ 
-data = UnionFind()
-data.union(25, 18)
-data.union(18, 1)
-data.union(16, 44)
-data.union(8, 44)
+uf = UnionFind()   #1,2,3   4,5,6   7,8,9
+uf.union(1, 2)
+uf.union(3, 1)
 
+uf.union(4, 5)
+uf.union(5, 6)
 
-data.display_data_list()  """
+uf.union(7, 8)
+uf.union(7,9)
+
+uf.union(8,8)
+uf.union(7, 8)
+uf.union(4, 5)
+uf.union(4, 1)
+uf.union(1, 4)
+uf.union(1, 4)
+uf.union(7, 4)
+uf.display_data_list()
+ """
