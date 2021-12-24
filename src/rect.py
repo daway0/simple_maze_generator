@@ -2,13 +2,13 @@ from PIL import ImageDraw, Image
 
 
 class Rectangle ():
-    def __init__(self, width, height, fill='gray',outline=None ):  # size: tuple (x,y)
+    def __init__(self, width, height, fill='gray', outline=None):
         if width == 0 or height == 0:
             print('its line or dot oskol')
             return
         self.__width, self.__height = width, height
         self.fill = fill
-        self.outline= outline
+        self.outline = outline
 
     def __size_validation(self):
         if self.__width == 0 or self.height == 0:
@@ -35,14 +35,13 @@ class Rectangle ():
 
     def size(self):
         return (self.__width, self.__height)
+
     def swap_height_width(self):
         self.__width, self.__height = self.__height, self.__width
-        
 
 
-""" whiteboard = Image.new('RGB', (200, 200), color='white')
-rect1 = Rectangle(40, 50)
-rect1.draw((100, 100), whiteboard)
-print(rect1.size())
-whiteboard.show() 
- """
+if __name__ == '__main__':
+    whiteboard = Image.new('RGB', (200, 200), color='white')
+    rect1 = Rectangle(40, 50)
+    rect1.draw((100, 100), whiteboard)
+    whiteboard.show()
