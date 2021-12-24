@@ -46,12 +46,12 @@ class UnionFind():
         parent_1 = self.__find(id1)
         parent_2 = self.__find(id2)
 
-        if not parent_1 or not parent_2 or parent_2==parent_1:
+        if not parent_1 or not parent_2 or parent_2 == parent_1:
             return
-        
+
         for item in self.__data[parent_2[1]][1:]:
-          for id in item: 
-            self.__data[parent_1[1]][1].add(id)
+            for id in item:
+                self.__data[parent_1[1]][1].add(id)
         self.__data.pop(parent_2[1])
 
     def display_data_list(self):
@@ -71,24 +71,3 @@ class UnionFind():
             return False
         if parent_1 == parent_2:
             return True
-
-""" 
-uf = UnionFind()   #1,2,3   4,5,6   7,8,9
-uf.union(1, 2)
-uf.union(3, 1)
-
-uf.union(4, 5)
-uf.union(5, 6)
-
-uf.union(7, 8)
-uf.union(7,9)
-
-uf.union(8,8)
-uf.union(7, 8)
-uf.union(4, 5)
-uf.union(4, 1)
-uf.union(1, 4)
-uf.union(1, 4)
-uf.union(7, 4)
-uf.display_data_list()
- """

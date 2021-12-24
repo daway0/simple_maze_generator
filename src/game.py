@@ -4,9 +4,6 @@ from rect import Rectangle
 from unionfind import UnionFind
 from numpy import random
 
-""" import sys
-sys.stdout = open('output.txt', 'w') """
-
 
 class Game():
     def __init__(self, grid_row, grid_col, rectangle, start_cell, end_cell):
@@ -68,17 +65,6 @@ class Game():
             for j in range(len(grid[i])):
                 if i % 2 == 0 and j % 2 == 1:  # horizontal
                     if not (grid[i][j] == 'w'):  # no wall
-                        if grid[i][j] == -3:
-                            rect_last = Rectangle(
-                                self.rect_width, self.rect_height, 'red')
-                            print('hello1')
-                            x = (self.rect_height/2) + (j)/2 * \
-                                ((wb_width-self.rect_height) /
-                                 ((len(grid[i])-1)/2))
-                            y = (self.rect_width/2) + (i-1)/2 * \
-                                ((wb_height-self.rect_height) / ((len(grid)-1)/2))
-
-                            rect_last.draw((x, y), self.whiteboard)
                         continue
 
                     x = (self.rect_width/2) + (j-1)/2 * \
@@ -93,17 +79,6 @@ class Game():
             for j in range(len(grid[i])):
                 if i % 2 == 1 and j % 2 == 0:  # vertical
                     if not (grid[i][j] == 'w'):  # no wall
-                        if grid[i][j] == -3:
-                            rect_last = Rectangle(
-                                self.rect_height, self.rect_width, 'red')
-                            print('hello')
-                            x = (self.rect_height/2) + (j)/2 * \
-                                ((wb_width-self.rect_height) /
-                                 ((len(grid[i])-1)/2))
-                            y = (self.rect_width/2) + (i-1)/2 * \
-                                ((wb_height-self.rect_height) / ((len(grid)-1)/2))
-
-                            rect_last.draw((x, y), self.whiteboard)
                         continue
 
                     x = (self.rect_height/2) + (j)/2 * \
@@ -112,25 +87,14 @@ class Game():
                         ((wb_height-self.rect_height) / ((len(grid)-1)/2))
 
                     self.__rectangle.draw((x, y), self.whiteboard)
-                # PRINT E id kamelan ru hava va cheshmi set shode, (baraye debug e union find)
-                elif i % 2 == 1 and j % 2 == 1:
-                    # +1/3 self.width uptional e
-                    x = (self.rect_height/2) + (j)/2 * \
-                        ((wb_width-self.rect_height) /
-                         ((len(grid[i])-1)/2))-0.3*self.rect_width
-                    y = (self.rect_width/2) + (i-1)/2 * \
-                        ((wb_height-self.rect_height) /
-                         ((len(grid)-1)/2)) - 0.3*self.rect_width
-                    # self.__print_id(str(grid[i][j]), x, y)
 
     def __print_id(self, id, x_axis, y_axis):  # id is string
         draw = ImageDraw.Draw(self.whiteboard)
         font = ImageFont.truetype(font="arial.ttf", size=self.rect_width - 10)
         draw.text((x_axis, y_axis), id, (255, 255, 255), font=font)
 
-    def remove_wall_uniform(self, percentage=0):  # wall remove percentage
+    def remove_wall_uniform(self):
         grid = self.__grid.grid_list()
-        # while (self.inside_wall / self.__init_inside_wall)*100 > (100-percentage):
         while not(self.cell_union.find(-1, -2)):
 
             row = int(random.uniform(1, len(grid)-1, None))
@@ -138,18 +102,15 @@ class Game():
             self.__remove_wall(row, col)
         self.__grid.grid_list()[row][col] = -3  # last_wall
 
-        # print (f'{row} {col}')
-
     def __remove_wall(self, row, col):
         grid = self.__grid.grid_list()
         if grid[row][col] != 'w':
             return False
 
         # difficulaity
-        if self.__grid.cell_wall_counter(row, col)[0] <= 2 or self.__grid.cell_wall_counter(row, col)[1] <= 2:
-            print("False")
+        if self.__grid.cell_wall_counter(row, col)[0] <= 2 or self.__grid.cell_wall_counter(row, col)[1] <= 1:
+
             return False
-        print("===>True")
         self.union_cells(row, col)
         grid[row][col] = 0
         self.inside_wall -= 1
@@ -157,7 +118,7 @@ class Game():
     def union_cells(self, wall_row, wall_col):
         # check horizontal or vertical
 
-        grid = self.__grid.grid_list()  # fcking expose
+        grid = self.__grid.grid_list()
         if wall_row % 2 == 0:  # horizontal wall
             self.cell_union.union(grid[wall_row-1][wall_col],
                                   grid[wall_row+1][wall_col])
@@ -166,10 +127,12 @@ class Game():
                                   grid[wall_row][wall_col+1])
 
 
-rect = Rectangle(20, 2, '#555555')
-game = Game(20, 20, rect, 21, 380)
-game.build_whiteboard('black')
-game.remove_wall_uniform(50)
-game.draw_maze()
-game.whiteboard.show()
-game.whiteboard.save('./asar_honary.png')
+if __name__ == '__main__':
+
+    rect = Rectangle(20, 2, 'green')
+    game = Game(20, 20, rect, 21, 380)
+    game.build_whiteboard('black')
+    game.remove_wall_uniform()
+    game.draw_maze()
+    game.whiteboard.show()
+    game.whiteboard.save('./maze.png')
